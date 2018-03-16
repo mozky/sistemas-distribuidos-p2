@@ -1,6 +1,8 @@
-package server;
+package com.server;
 
-import utils.CustomClock;
+import com.utils.CustomClock;
+
+import java.time.format.DateTimeFormatter;
 
 public class ClockProtocol {
     private static final int WAITING = 0;
@@ -8,6 +10,7 @@ public class ClockProtocol {
     private static final int SECONDS = 2;
     private static final int MINUTES = 3;
     private static final int HOURS = 4;
+    private static final int MASTER = 5;
 
     private CustomClock clock;
 
@@ -41,6 +44,10 @@ public class ClockProtocol {
                             theOutput = "You are now the hours clock";
                             state = HOURS;
                             break;
+                        case "master":
+                            theOutput = "Master clock connected...";
+                            state = MASTER;
+                            break;
                         default:
                             theOutput = "WHAT?";
                     }
@@ -67,6 +74,20 @@ public class ClockProtocol {
                         }
                     }
                     theOutput = String.valueOf(this.clock.getTime().getHour());
+                    break;
+                case MASTER:
+                    if (theInput != null) {
+                        if (theInput.equalsIgnoreCase("plusHour")) {
+                            this.clock.plusHour();
+                        } else if (theInput.equalsIgnoreCase("minusHour")) {
+                            this.clock.minusHour();
+                        } else if (theInput.equalsIgnoreCase("plusMinute")) {
+                            this.clock.plusMinute();
+                        } else if (theInput.equalsIgnoreCase("minusMinute")) {
+                            this.clock.minusMinute();
+                        }
+                    }
+                    theOutput = String.valueOf(this.clock.getTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
                     break;
                 default:
                     theOutput = "WHAT?";

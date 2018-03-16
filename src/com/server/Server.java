@@ -1,6 +1,6 @@
-package server;
+package com.server;
 
-import utils.CustomClock;
+import com.utils.CustomClock;
 
 import java.net.*;
 import java.io.*;
@@ -15,9 +15,9 @@ public class Server {
         CustomClock clock = new CustomClock();
 
         //We start listening for socket connections
+        System.out.println("Server started... listening for connections");
         try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
             while (listening) {
-                System.out.println("Server started... listening for connections");
                 new ServerThread(serverSocket.accept(), clock).start();
             }
         } catch (IOException e) {

@@ -1,6 +1,6 @@
-package server;
+package com.server;
 
-import utils.CustomClock;
+import com.utils.CustomClock;
 
 import java.net.*;
 import java.io.*;
