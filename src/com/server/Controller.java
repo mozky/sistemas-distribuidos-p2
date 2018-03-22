@@ -3,21 +3,22 @@ package com.server;
 import com.socketfx.Constants;
 import com.socketfx.FxSocketClient;
 import com.socketfx.SocketListener;
+import com.utils.FxTimer;
+import com.utils.Timer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.util.Duration;
 import com.utils.CustomClock;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
-    private boolean connected;
     private boolean configured;
 
     @FXML
@@ -28,19 +29,13 @@ public class Controller implements Initializable {
 
     private CustomClock clock = new CustomClock();
     private FxSocketClient socket;
+    private Timer timer;
 
     public Controller() {
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        clockSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Slider Value Changed: " + newValue.doubleValue() + ")");
-            clock.setTickSpeed(newValue.doubleValue());
-        });
-
-        connected = false;
-
         this.connect();
     }
 
@@ -54,24 +49,19 @@ public class Controller implements Initializable {
                     socket.sendMessage("master");
                     configured = true;
                 } else {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if (timer != null) {
+                        timer.stop();
                     }
-                    socket.sendMessage("");
-                    clockLabel.setText(line);
+                    timer = FxTimer.runLater(Duration.ofMillis(250), () -> {
+                        socket.sendMessage("");
+                        clockLabel.setText(line);
+                    });
                 }
             }
         }
 
         @Override
         public void onClosedStatus(boolean isClosed) {
-            if (isClosed) {
-                connected = false;
-            } else {
-                connected = true;
-            }
         }
     }
 
